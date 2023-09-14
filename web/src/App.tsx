@@ -1,10 +1,12 @@
 import { Button } from "./components/ui/button";
-import { Github, Clapperboard, MonitorUp, Sparkles } from 'lucide-react';
+import { Github, Sparkles } from 'lucide-react';
 import { Textarea } from "./components/ui/textarea";
 import { Separator } from "./components/ui/separator";
 import { Label } from "./components/ui/label";
 import { SelectTrigger, SelectValue, Select, SelectContent, SelectItem } from "./components/ui/select";
 import { Slider } from "./components/ui/slider";
+
+import { VideoInputForm } from "./components/video-input-form";
 
 
 export function App() {
@@ -35,35 +37,7 @@ export function App() {
         </div>
 
         <aside className="w-80 space-y-4">
-          <form className="space-y-4">
-            <label
-              htmlFor="video"
-              className="border flex aspect-video cursor-pointer rounded-md border-muted text-sm flex-col gap-2 items-center justify-center text-muted hover:bg-primary/5"
-            >
-              <Clapperboard />
-              Selecione o Vídeo
-            </label>
-
-            <input type="file" id="video" accept="video/mp4" className="sr-only" />
-
-            <Separator />
-
-            <div className="space-y-2">
-              <Label htmlFor="transcription_prompt">Prompt de Descrição</Label>
-              <Textarea
-                id="transcription_prompt"
-                className="h-20 leading-relaxed resize-none"
-                placeholder="Inclua palavras-chave mencionadas no video separadas por vírgula (,)"
-              >
-
-              </Textarea>
-            </div>
-
-            <Button type="submit" className="w-full" variant={"secondary"}>
-              Carregar Vídeo
-              <MonitorUp className="ml-2 w-4 h-4" />
-            </Button>
-          </form>
+          <VideoInputForm/>
 
           <Separator />
 
