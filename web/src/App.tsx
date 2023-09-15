@@ -5,11 +5,39 @@ import { Separator } from "./components/ui/separator";
 import { Label } from "./components/ui/label";
 import { SelectTrigger, SelectValue, Select, SelectContent, SelectItem } from "./components/ui/select";
 import { Slider } from "./components/ui/slider";
+import { PromptSelect } from './components/prompt-select';
 
 import { VideoInputForm } from "./components/video-input-form";
+import { useState } from "react";
+
+import { useCompletion } from 'ai/react';
 
 
 export function App() {
+  
+  const [temperature, setTemperature] = useState(0.5);
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  
+
+  const {
+    input,
+    setInput,
+    handleInputChange,
+    handleSubmit,
+    completion,
+    isLoading,
+  } = useCompletion({
+    api: 'http://localhost:3333/ai/complete',
+    body: {
+      videoId,
+      temperature,
+    },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="px-4 py-4 flex items-center justify-between border-b">
@@ -26,10 +54,13 @@ export function App() {
             <Textarea
               className="resize-none p-3 leading-relaxed"
               placeholder="Inclua aqui o prompt para a IA..."
+              value={input}
+              onChange={handleInputChange}
             />
             <Textarea
               className="resize-none p-3 leading-relaxed"
               placeholder="Resultado..." readOnly
+              value={completion}
             />
           </div>
 
@@ -37,23 +68,15 @@ export function App() {
         </div>
 
         <aside className="w-80 space-y-4">
-          <VideoInputForm/>
+          <VideoInputForm onVideoUploaded={setVideoId}/>
 
           <Separator />
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
 
           <div className="space-y-2">
               <Label>Prompt</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione um prompt..."/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="title">Título do YouTube</SelectItem>
-                  <SelectItem value="description">Descrição do YouTube</SelectItem>
-                </SelectContent>
-              </Select>
+              <PromptSelect onPromptSelected={setInput} />
               <span className="block text-xs text-muted italic">Você poderá customizar esta opção em breve</span>
             </div>
 
@@ -78,6 +101,8 @@ export function App() {
                 min={0}
                 max={1}
                 step={0.1}
+                value={[temperature]}
+                onValueChange={value => setTemperature(value[0])}
               >
 
               </Slider>
@@ -86,7 +111,7 @@ export function App() {
 
             <Separator />
 
-            <Button type="submit" className="w-full">
+            <Button disabled={isLoading} type="submit" className="w-full">
               Executar
               <Sparkles className="w-4 h-4 ml-2"/>
             </Button>
